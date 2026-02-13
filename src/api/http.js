@@ -2,7 +2,7 @@ import axios from "axios";
 import authStorage from "../auth/authStorage";
 
 const http = axios.create({
-  baseURL: "https://client.z1nepal.com.np/api",
+  baseURL: "https://client.z1nepal.com.np/api/",
   headers: {
     "Content-Type": "application/json",
   },

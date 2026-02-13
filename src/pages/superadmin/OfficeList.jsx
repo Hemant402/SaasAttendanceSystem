@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import OfficeApproveDialog from "./OfficeApproveDialog";
+import { useTranslation } from "react-i18next";
 
 export default function OfficeList() {
   const [offices, setOffices] = useState([]);
@@ -23,6 +24,7 @@ export default function OfficeList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
   const [selectedOffice, setSelectedOffice] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadOffices();
@@ -56,7 +58,7 @@ export default function OfficeList() {
       <Box className="mb-3">
         <TextField
           size="small"
-          label="Search Office"
+          label={t("searchOffices")}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -68,12 +70,12 @@ export default function OfficeList() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Office</TableCell>
-            <TableCell>Admin</TableCell>
-            <TableCell>Mobile</TableCell>
-            <TableCell>Dealer</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Action</TableCell>
+            <TableCell>{t("office")}</TableCell>
+            <TableCell>{t("admin")}</TableCell>
+            <TableCell>{t("mobile")}</TableCell>
+            <TableCell>{t("dealer")}</TableCell>
+            <TableCell>{t("status")}</TableCell>
+            <TableCell>{t("action")}</TableCell>
           </TableRow>
         </TableHead>
 
@@ -94,16 +96,16 @@ export default function OfficeList() {
 
                 <TableCell>
                   {o.isApproved ? (
-                    <Chip label="Approved" color="success" />
+                    <Chip label={t("approved")} color="success" />
                   ) : (
-                    <Chip label="Pending" color="warning" />
+                    <Chip label={t("pending")} color="warning" />
                   )}
                 </TableCell>
 
                     <TableCell>
                       <Box display="flex" gap={1}>
                         {/* Edit */}
-                        <Tooltip title="Edit">
+                        <Tooltip title={t("edit")}>
                           <IconButton
                             size="small"
                             color="primary"
@@ -116,21 +118,8 @@ export default function OfficeList() {
                             <EditIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-
-
-                        {/* Delete */}
-{/*                         <Tooltip title="Delete"> */}
-{/*                           <IconButton */}
-{/*                             size="small" */}
-{/*                             color="error" */}
-{/*                             onClick={() => handleDelete(o)} */}
-{/*                           > */}
-{/*                             <DeleteIcon fontSize="small" /> */}
-{/*                           </IconButton> */}
-{/*                         </Tooltip> */}
-
                         {/* Approve */}
-                        <Tooltip title="Approve">
+                        <Tooltip title={t("approve")}>
                           <IconButton
                             size="small"
                             color="success"
@@ -148,7 +137,7 @@ export default function OfficeList() {
           {filtered.length === 0 && (
             <TableRow>
               <TableCell colSpan={6} align="center">
-                No offices found
+                {t("noOfficesFound")}
               </TableCell>
             </TableRow>
           )}

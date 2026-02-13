@@ -2,11 +2,14 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import menuConfig from "./menuConfig";
 import { useAuth } from "../auth/AuthProvider";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar() {
   const { user } = useAuth();
   const menus = menuConfig[user?.userType] || [];
   const location = useLocation();
+  const { t } = useTranslation();
+
 
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -45,7 +48,7 @@ export default function Sidebar() {
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  {menu.label}
+                  {t(menu.label)}
                   <span className="text-xs">
                     {openMenu === menu.label ? "▲" : "▼"}
                   </span>
@@ -65,7 +68,7 @@ export default function Sidebar() {
                           }`
                         }
                       >
-                        {sub.label}
+                        {t(sub.label)}
                       </NavLink>
                     ))}
                   </div>
@@ -87,7 +90,7 @@ export default function Sidebar() {
                 }`
               }
             >
-              {menu.label}
+              {t(menu.label)}
             </NavLink>
           );
         })}

@@ -7,10 +7,12 @@ import BusinessIcon from "@mui/icons-material/Business";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import ScienceIcon from "@mui/icons-material/Science";
+import { useTranslation } from "react-i18next";
 
 function SuperAdminDashboard() {
   const [stats, setStats] = useState(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const loadStats = async () => {
     try {
@@ -30,7 +32,7 @@ function SuperAdminDashboard() {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
-        title="Total Offices"
+        title={t("totalOffices")}
         value={stats.totalOffices}
         icon={BusinessIcon}
         color="blue"
@@ -38,7 +40,7 @@ function SuperAdminDashboard() {
       />
 
       <StatCard
-        title="Approved Offices"
+        title={t("approvedOffices")}
         value={stats.approvedOffices}
         icon={CheckCircleIcon}
         color="green"
@@ -48,7 +50,7 @@ function SuperAdminDashboard() {
       />
 
       <StatCard
-        title="Pending Offices"
+        title={t("pendingOffices")}
         value={stats.pendingOffices}
         icon={PendingActionsIcon}
         color="amber"
@@ -58,7 +60,7 @@ function SuperAdminDashboard() {
       />
 
       <StatCard
-        title="Demo Offices"
+        title={t("demoOffices")}
         value={stats.demoOffices}
         icon={ScienceIcon}
         color="purple"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -30,6 +30,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { useTranslation } from "react-i18next";
+import connection, { startConnection } from "../services/signalrService";
 
 export default function Topbar({ toggleSidebar }) {
   const { user, logout } = useAuth();
@@ -40,39 +42,65 @@ export default function Topbar({ toggleSidebar }) {
   const [notifAnchor, setNotifAnchor] = useState(null);
   const [tabValue, setTabValue] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const { t, i18n } = useTranslation();
 
-  // Static mock notifications
-  const notifications = [
-    {
-      id: 1,
-      name: "Gharbharan Yadav",
-      message: "has requested for a Manual Attendance.",
-      date: "2025-11-14 09:13",
-      unread: true,
-    },
-    {
-      id: 2,
-      name: "Amit Sinha",
-      message: "has requested for a Manual Attendance.",
-      date: "2025-10-15 10:15",
-      unread: false,
-    },
-    {
-      id: 3,
-      name: "Amit Sinha",
-      message: "has requested for a Manual Attendance.",
-      date: "2025-10-14 10:01",
-      unread: false,
-    },
-  ];
+  /* ================= SIGNALR ================= */
+  useEffect(() => {
+    let isMounted = true;
 
+    const initSignalR = async () => {
+      try {
+        await startConnection();
+
+        // remove old listener if exists (prevent duplicates)
+        connection.off("ReceiveNotification");
+
+        connection.on("ReceiveNotification", (message) => {
+          if (!isMounted) return;
+
+          const newNotification = {
+            id: Date.now(),
+            name: "System",
+            message,
+            date: new Date().toLocaleString(),
+            unread: true,
+          };
+
+          setNotifications((prev) => [newNotification, ...prev]);
+        });
+      } catch (err) {
+        console.error("SignalR connection failed:", err);
+      }
+    };
+
+    initSignalR();
+
+    return () => {
+      isMounted = false;
+      connection.off("ReceiveNotification");
+    };
+  }, []);
+
+  /* ================= DERIVED VALUES ================= */
   const unreadCount = notifications.filter((n) => n.unread).length;
 
+  /* ================= MARK AS READ WHEN OPEN ================= */
+  useEffect(() => {
+    if (notifAnchor) {
+      setNotifications((prev) =>
+        prev.map((n) => ({ ...n, unread: false }))
+      );
+    }
+  }, [notifAnchor]);
+
+  /* ================= LOGOUT ================= */
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  /* ================= FULLSCREEN ================= */
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -86,29 +114,32 @@ export default function Topbar({ toggleSidebar }) {
   return (
     <AppBar position="static" color="inherit" elevation={1}>
       <Toolbar className="flex justify-between">
-          <Box className="flex items-center gap-2">
-              <IconButton onClick={toggleSidebar}>
-                <MenuIcon />
-              </IconButton>
 
-              <Typography variant="h6" fontWeight="bold">
-                Dashboard
-              </Typography>
-          </Box>
-
+        {/* LEFT SECTION */}
         <Box className="flex items-center gap-2">
+          <IconButton onClick={toggleSidebar}>
+            <MenuIcon />
+          </IconButton>
+
+          <Typography variant="h6" fontWeight="bold">
+            {t("dashboard")}
+          </Typography>
+        </Box>
+
+        {/* RIGHT SECTION */}
+        <Box className="flex items-center gap-2">
+
           {/* Fullscreen */}
           <IconButton onClick={toggleFullscreen}>
             {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
           </IconButton>
 
-
+          {/* Notification Bell */}
           <IconButton onClick={(e) => setNotifAnchor(e.currentTarget)}>
             <Badge badgeContent={unreadCount} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>
-
 
           <Menu
             anchorEl={notifAnchor}
@@ -126,7 +157,7 @@ export default function Topbar({ toggleSidebar }) {
           >
             <Paper elevation={0} sx={{ p: 2 }}>
               <Typography fontWeight="bold" fontSize={18}>
-                Notifications
+                {t("notifications")}
               </Typography>
 
               <Tabs
@@ -136,8 +167,8 @@ export default function Topbar({ toggleSidebar }) {
                 indicatorColor="primary"
                 sx={{ mt: 1 }}
               >
-                <Tab label="ALL" />
-                <Tab label="UNREAD" />
+                <Tab label={t("all")} />
+                <Tab label={t("unread")} />
               </Tabs>
 
               <List sx={{ mt: 1 }}>
@@ -188,8 +219,17 @@ export default function Topbar({ toggleSidebar }) {
             open={Boolean(langAnchor)}
             onClose={() => setLangAnchor(null)}
           >
-            <MenuItem>English</MenuItem>
-            <MenuItem>Nepali</MenuItem>
+{/*             <MenuItem>English</MenuItem> */}
+{/*             <MenuItem>Nepali</MenuItem> */}
+            <MenuItem onClick={() => {i18n.changeLanguage("en");
+                setLangAnchor(null);}}>
+                {t("english")}
+            </MenuItem>
+            <MenuItem onClick={() => {i18n.changeLanguage("np");
+                setLangAnchor(null);}}>
+              {t("nepali")}
+            </MenuItem>
+
           </Menu>
 
           {/* User Menu */}
@@ -214,21 +254,22 @@ export default function Topbar({ toggleSidebar }) {
           >
             <MenuItem>
               <SwapHorizIcon fontSize="small" sx={{ mr: 1 }} />
-              Change Role
+             {t("changeRole")}
             </MenuItem>
 
-            <MenuItem onClick={() => navigate("/dashboard/dealer")}>
+            <MenuItem onClick={() => navigate("/dashboards/SuperAdminDashboard")}>
               <LockResetIcon fontSize="small" sx={{ mr: 1 }} />
-              Change Password
+              {t("changePassword")}
             </MenuItem>
 
             <Divider />
 
             <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
               <LogoutIcon fontSize="small" sx={{ mr: 1 }} />
-              Logout
+              {t("logout")}
             </MenuItem>
           </Menu>
+
         </Box>
       </Toolbar>
     </AppBar>

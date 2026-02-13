@@ -1,204 +1,4 @@
-// import { useEffect, useState } from "react";
-// import {
-//   Card,
-//   CardContent,
-//   TextField,
-//   Switch,
-//   Button,
-//   Divider,
-// } from "@mui/material";
-// import http from "../../api/http";
-// import { API } from "../../api/endpoints";
-// import AppSnackbar from "../../components/AppSnackbar";
-//
-// export default function SystemSettings() {
-//   const [form, setForm] = useState({
-//     systemName: "",
-//     superAdminUsername: "",
-//     newPassword: "",
-//     supportEmail: "",
-//     supportPhone: "",
-//     isMaintenanceMode: false,
-//     smsApiUrl: "",
-//     smsToken: "",
-//     smsSenderId: "",
-//     fcmServerKey: "",
-//     fcmSenderId: "",
-//   });
-//
-//   const [snack, setSnack] = useState({
-//     open: false,
-//     message: "",
-//     severity: "success",
-//   });
-//
-//   /* =============================
-//      Load settings on page load
-//      ============================= */
-//   useEffect(() => {
-//     const loadSettings = async () => {
-//       const res = await http.get(API.GET_SYSTEM_SETTINGS);
-//       setForm((prev) => ({
-//         ...prev,
-//         ...res.data,
-//         newPassword: "", // never prefill password
-//       }));
-//     };
-//     loadSettings();
-//   }, []);
-//
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setForm({ ...form, [name]: value });
-//   };
-//
-//   const handleSave = async () => {
-//     try {
-//       await http.post(API.UPDATE_SYSTEM_SETTINGS, form);
-//       setSnack({
-//         open: true,
-//         message: "System settings सफलतापूर्वक अपडेट भयो",
-//         severity: "success",
-//       });
-//       setForm({ ...form, newPassword: "" });
-//     } catch {
-//       setSnack({
-//         open: true,
-//         message: "Settings update गर्दा समस्या आयो",
-//         severity: "error",
-//       });
-//     }
-//   };
-//
-//   return (
-//     <Card>
-//       <CardContent className="space-y-6">
-//         <h2 className="text-xl font-semibold">System Settings</h2>
-//
-//         {/* ===== General ===== */}
-//         <Divider textAlign="left">General</Divider>
-//
-//         <TextField
-//           fullWidth
-//           label="System Name"
-//           name="systemName"
-//           value={form.systemName}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="Super Admin Username"
-//           name="superAdminUsername"
-//           value={form.superAdminUsername}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="New Password"
-//           type="password"
-//           name="newPassword"
-//           value={form.newPassword}
-//           onChange={handleChange}
-//           helperText="खाली छोड्दा पासवर्ड परिवर्तन हुँदैन"
-//         />
-//
-//         {/* ===== Support ===== */}
-//         <Divider textAlign="left">Support Contact</Divider>
-//
-//         <TextField
-//           fullWidth
-//           label="Support Email"
-//           name="supportEmail"
-//           value={form.supportEmail || ""}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="Support Phone"
-//           name="supportPhone"
-//           value={form.supportPhone || ""}
-//           onChange={handleChange}
-//         />
-//
-//         {/* ===== System Mode ===== */}
-//         <Divider textAlign="left">System Mode</Divider>
-//
-//         <div className="flex items-center gap-4">
-//           <Switch
-//             checked={form.isMaintenanceMode}
-//             onChange={(e) =>
-//               setForm({ ...form, isMaintenanceMode: e.target.checked })
-//             }
-//           />
-//           <span>Maintenance Mode</span>
-//         </div>
-//
-//         {/* ===== SMS ===== */}
-//         <Divider textAlign="left">SMS Configuration</Divider>
-//
-//         <TextField
-//           fullWidth
-//           label="SMS API URL"
-//           name="smsApiUrl"
-//           value={form.smsApiUrl}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="SMS Token"
-//           name="smsToken"
-//           value={form.smsToken}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="SMS Sender ID"
-//           name="smsSenderId"
-//           value={form.smsSenderId}
-//           onChange={handleChange}
-//         />
-//
-//         {/* ===== FCM ===== */}
-//         <Divider textAlign="left">FCM Notification</Divider>
-//
-//         <TextField
-//           fullWidth
-//           label="FCM Server Key"
-//           name="fcmServerKey"
-//           value={form.fcmServerKey}
-//           onChange={handleChange}
-//         />
-//
-//         <TextField
-//           fullWidth
-//           label="FCM Sender ID"
-//           name="fcmSenderId"
-//           value={form.fcmSenderId || ""}
-//           onChange={handleChange}
-//         />
-//
-//         {/* ===== Action ===== */}
-//         <div className="flex justify-end">
-//           <Button variant="contained" onClick={handleSave}>
-//             Save Settings
-//           </Button>
-//         </div>
-//       </CardContent>
-//
-//       <AppSnackbar
-//         open={snack.open}
-//         message={snack.message}
-//         severity={snack.severity}
-//         onClose={() => setSnack({ ...snack, open: false })}
-//       />
-//     </Card>
-//   );
-// }
+
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -213,9 +13,12 @@ import {
 import http from "../../api/http";
 import { API } from "../../api/endpoints";
 import AppSnackbar from "../../components/AppSnackbar";
+import { useTranslation } from "react-i18next";
+
 
 export default function SystemSettings() {
   const [tab, setTab] = useState(0);
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     systemName: "",
@@ -224,6 +27,13 @@ export default function SystemSettings() {
     supportEmail: "",
     supportPhone: "",
     isMaintenanceMode: false,
+
+    // ✅ SMS fields restored
+    smsApiUrl: "",
+    smsToken: "",
+    smsSenderId: "",
+
+    // ✅ FCM
     fcmServerKey: "",
     fcmSenderId: "",
   });
@@ -275,23 +85,25 @@ export default function SystemSettings() {
   return (
     <Card>
       <CardContent>
-        <h2 className="text-xl font-semibold mb-6">System Settings</h2>
+        <h2 className="text-xl font-semibold mb-6">{t("systemSettings")}</h2>
 
         <Box sx={{ display: "flex", gap: 4 }}>
-          {/* LEFT SIDE MENU */}
+
+          {/* ===== LEFT SIDE MENU ===== */}
           <Tabs
             orientation="vertical"
             value={tab}
             onChange={(e, newValue) => setTab(newValue)}
             sx={{ borderRight: 1, borderColor: "divider", minWidth: 220 }}
           >
-            <Tab label="General" />
-            <Tab label="Support Contact" />
-            <Tab label="System Mode" />
-            <Tab label="FCM Notification" />
+            <Tab label={t("general")} />
+            <Tab label={t("supportContact")} />
+            <Tab label={t("systemMode")} />
+            <Tab label={t("smsConfiguration")} /> {/* ✅ Added */}
+            <Tab label={t("fcmNotification")} />
           </Tabs>
 
-          {/* RIGHT SIDE CONTENT */}
+          {/* ===== RIGHT SIDE CONTENT ===== */}
           <Box sx={{ flex: 1 }}>
 
             {/* ===== General ===== */}
@@ -299,7 +111,7 @@ export default function SystemSettings() {
               <Box className="space-y-4">
                 <TextField
                   fullWidth
-                  label="System Name"
+                  label={t("systemName")}
                   name="systemName"
                   value={form.systemName}
                   onChange={handleChange}
@@ -307,7 +119,7 @@ export default function SystemSettings() {
 
                 <TextField
                   fullWidth
-                  label="Super Admin Username"
+                  label={t("superAdminUsername")}
                   name="superAdminUsername"
                   value={form.superAdminUsername}
                   onChange={handleChange}
@@ -315,7 +127,7 @@ export default function SystemSettings() {
 
                 <TextField
                   fullWidth
-                  label="New Password"
+                  label={t("password")}
                   type="password"
                   name="newPassword"
                   value={form.newPassword}
@@ -330,7 +142,7 @@ export default function SystemSettings() {
               <Box className="space-y-4">
                 <TextField
                   fullWidth
-                  label="Support Email"
+                  label={t("supportEmail")}
                   name="supportEmail"
                   value={form.supportEmail || ""}
                   onChange={handleChange}
@@ -338,7 +150,7 @@ export default function SystemSettings() {
 
                 <TextField
                   fullWidth
-                  label="Support Phone"
+                  label={t("supportPhone")}
                   name="supportPhone"
                   value={form.supportPhone || ""}
                   onChange={handleChange}
@@ -359,17 +171,46 @@ export default function SystemSettings() {
                       })
                     }
                   />
-                  <span>Maintenance Mode</span>
+                  <span>{t("maintenanceMode")}</span>
                 </div>
               </Box>
             )}
 
-            {/* ===== FCM Notification ===== */}
+            {/* ===== SMS Configuration ===== */}
             {tab === 3 && (
               <Box className="space-y-4">
                 <TextField
                   fullWidth
-                  label="FCM Server Key"
+                  label={t("smsApiUrl")}
+                  name="smsApiUrl"
+                  value={form.smsApiUrl}
+                  onChange={handleChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label={t("smsToken")}
+                  name="smsToken"
+                  value={form.smsToken}
+                  onChange={handleChange}
+                />
+
+                <TextField
+                  fullWidth
+                  label={t("smsSenderId")}
+                  name="smsSenderId"
+                  value={form.smsSenderId}
+                  onChange={handleChange}
+                />
+              </Box>
+            )}
+
+            {/* ===== FCM Notification ===== */}
+            {tab === 4 && (
+              <Box className="space-y-4">
+                <TextField
+                  fullWidth
+                  label={t("fcmServerKey")}
                   name="fcmServerKey"
                   value={form.fcmServerKey}
                   onChange={handleChange}
@@ -377,7 +218,7 @@ export default function SystemSettings() {
 
                 <TextField
                   fullWidth
-                  label="FCM Sender ID"
+                  label={t("fcmSenderId")}
                   name="fcmSenderId"
                   value={form.fcmSenderId || ""}
                   onChange={handleChange}
@@ -385,10 +226,10 @@ export default function SystemSettings() {
               </Box>
             )}
 
-            {/* SAVE BUTTON */}
+            {/* ===== SAVE BUTTON ===== */}
             <div className="flex justify-end mt-6">
               <Button variant="contained" onClick={handleSave}>
-                Save Settings
+                {t("saveSettings")}
               </Button>
             </div>
 

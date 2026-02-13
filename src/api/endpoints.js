@@ -1,4 +1,6 @@
 export const API = {
+  GET_DISTRICTS:(provinceName) => `/Address/districts/${provinceName}`,
+  GET_LOCAL_AREAS:(districtName) => `/Address/local-bodies/${districtName}`,
   CREATE_DEALER: "/SuperAdmin/create-dealer",
   GET_ALL_DEALERS: "/SuperAdmin/all-dealers",
   UPDATE_DEALER: (id) => `/SuperAdmin/update-dealer/${id}`,
@@ -11,4 +13,5 @@ export const API = {
   GET_ALL_OFFICES: "/SuperAdmin/all-offices",
   APPROVE_OFFICE: "/SuperAdmin/approve-office",
   UPDATE_OFFICE: (id) => `/SuperAdmin/update-office/${id}`,
+  RESET_OFFICE_PASSWORD: (id) => `/office/reset-password/${id}`
 };

@@ -24,13 +24,15 @@ import { useNavigate } from "react-router-dom";
 import http from "../../api/http";
 import { API } from "../../api/endpoints";
 import AppSnackbar from "../../components/AppSnackbar";
+import { useTranslation } from "react-i18next";
+
 
 export default function DealerList() {
   const [dealers, setDealers] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const { t } = useTranslation();
   const [deleteId, setDeleteId] = useState(null);
   const [snack, setSnack] = useState({
     open: false,
@@ -100,7 +102,7 @@ export default function DealerList() {
         <div className="flex items-center justify-between">
           <TextField
             size="small"
-            label="Search Dealer"
+            label={t("searchDealer")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -108,17 +110,17 @@ export default function DealerList() {
             variant="contained"
             onClick={() => navigate("/dashboard/superadmin/dealers/create")}
           >
-            + Create Dealer
+            + {t("createDealer")}
           </Button>
         </div>
 
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Dealer</TableCell>
-              <TableCell>Mobile</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell>{t("dealer")}</TableCell>
+              <TableCell>{t("mobile")}</TableCell>
+              <TableCell>{t("status")}</TableCell>
+              <TableCell align="right">{t("action")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -141,7 +143,7 @@ export default function DealerList() {
                   </TableCell>
 
                   <TableCell align="right">
-                      <Tooltip title="Edit">
+                      <Tooltip title={t("edit")}>
                             <IconButton
                               onClick={() =>
                                 navigate(`/dashboard/superadmin/dealers/edit/${d.id}`, {
@@ -152,7 +154,7 @@ export default function DealerList() {
                               <EditIcon />
                             </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title={t("delete")}>
                     <IconButton color="error" onClick={() => setDeleteId(d.id)}>
                       <DeleteIcon />
                     </IconButton>
